@@ -5,7 +5,7 @@ import { requestLogger } from "./http/middlewares/logger";
 import { routes } from "./http/routes";
 import { errorHandler } from "./http/middlewares/error-handler";
 
-const app: Application = express();
+export const app: Application = express();
 
 app.use(helmet()); // Headers de seguranca
 app.use(cors()); // CORS habilitado
