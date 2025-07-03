@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded
 app.get("/health", (_, res) => {
   res.status(200).json({
     status: "OK",
-    message: "Servidor funcionando normalmente",
+    message: "Server working normally",
     timestamp: new Date().toISOString(),
     uptime: Math.floor(process.uptime()) + "s",
   });
@@ -25,7 +25,7 @@ app.get("/health", (_, res) => {
 app.use("*", (req, res) => {
   res.status(404).json({
     success: false,
-    message: `Rota ${req.method} ${req.originalUrl} não encontrada`,
+    message: `Rote ${req.method} ${req.originalUrl} not found`,
   });
 });
 

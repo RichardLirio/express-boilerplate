@@ -21,15 +21,15 @@ process.on("unhandledRejection", (err: Error) => {
 
 // Inicializar servidor
 const server = app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`📝 Ambiente: ${NODE_ENV}`);
+  console.log(`🚀 Server running on port: ${PORT}`);
+  console.log(`📝 Environment: ${NODE_ENV}`);
   console.log(`🔗 URL: http://localhost:${PORT}`);
 });
 
 // shutdown
 process.on("SIGTERM", () => {
-  console.log("👋 SIGTERM recebido. Encerrando servidor...");
+  console.log("👋 SIGTERM received. Shutting down server...");
   server.close(() => {
-    console.log("✅ Servidor encerrado com sucesso.");
+    console.log("✅ Server shut down successfully.");
   });
 });
