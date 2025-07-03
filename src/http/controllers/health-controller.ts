@@ -1,5 +1,5 @@
-import { env } from "../env";
-import { SuccessResponse } from "@/types/response";
+import { SuccessResponse } from "@/@types/response";
+import { env } from "../../env/index";
 import { Request, Response } from "express";
 
 // Controller para health check detalhado

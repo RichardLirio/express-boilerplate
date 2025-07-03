@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { User } from "../types/user";
-import { SuccessResponse } from "@/types/response";
-import prisma from "../lib/prisma";
+
 import z from "zod";
-import { AppError } from "../middlewares/errorHandler";
+import { AppError } from "../middlewares/error-handler";
 import { hash } from "bcryptjs";
+import { User } from "../../@types/user";
+import prisma from "../../lib/prisma";
+import { SuccessResponse } from "../../@types/response";
 
 // GET /api/users - Listar todos os usuários
 export const getAllUsers = async (_: Request, res: Response) => {
