@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import { requestLogger } from "./middlewares/logger";
 import { errorHandler } from "./middlewares/errorHandler";
+import { routes } from "./routes";
 
 const app: Application = express();
 
@@ -16,15 +17,8 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded
 // Middleware de logging personalizado (simples)
 app.use(requestLogger);
 
-// Health check
-app.get("/health", (_, res) => {
-  res.status(200).json({
-    status: "OK",
-    message: "Server working normally",
-    timestamp: new Date().toISOString(),
-    uptime: Math.floor(process.uptime()) + "s",
-  });
-});
+// Rotas principais
+app.use("/api", routes);
 
 // Middleware para rotas não encontradas
 app.use("*", (req, res) => {
