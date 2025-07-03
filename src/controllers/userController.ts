@@ -4,6 +4,7 @@ import { SuccessResponse } from "@/types/response";
 import prisma from "../lib/prisma";
 import z from "zod";
 import { AppError } from "../middlewares/errorHandler";
+import { hash } from "bcryptjs";
 
 // GET /api/users - Listar todos os usuários
 export const getAllUsers = async (_: Request, res: Response) => {
@@ -25,22 +26,38 @@ export const createUser = async (
 ) => {
   try {
     const createUserBodySchema = z.object({
-      nome: z.string(),
+      name: z.string(),
       email: z.string().email(),
       password: z.string().min(6),
     });
 
-    const { nome, email, password } = createUserBodySchema.parse(req.body);
-    console.log("Creating user with data:", { nome, email, password });
+    const { name, email, password } = createUserBodySchema.parse(req.body);
 
-    // logica para criar o usuario
-    // const user = await userService.createUser({ nome, email, password });
+    const userExists = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (userExists) {
+      throw new AppError("User already exists", 409);
+    }
+
+    const passwordHash = await hash(password, 10); // hashe da senha
+
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: passwordHash,
+      },
+    });
 
     const response = {
       success: true,
-      message: "Usuário criado com sucesso",
+      message: "User created successfully",
       data: {
-        // user: { id: user.id, nome: user.nome, email: user.email }
+        ...user,
+        password: undefined, // nao retornar a senha no response
+        updatedAt: undefined, // nao retornar campo updatedat
       },
     };
 
@@ -54,7 +71,7 @@ export const createUser = async (
       }));
 
       const validationError = new AppError(
-        "Dados inválidos",
+        "Invalid request data",
         400,
         validationErrors // Passando os detalhes como terceiro parâmetro
       );
@@ -69,7 +86,7 @@ export const createUser = async (
 
     // Para outros erros, cria um erro genérico
     const genericError = new AppError(
-      error instanceof Error ? error.message : "Erro interno do servidor",
+      error instanceof Error ? error.message : "Internal Server Error",
       500
     );
     next(genericError);
