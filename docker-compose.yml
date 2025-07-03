@@ -1,0 +1,14 @@
+
+services:
+  postgres:
+    container_name: express-boilerplate-pg
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+      PGDATA: /data/postgres
+    volumes:
+      - ./data/pg:/data/postgres
