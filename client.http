@@ -11,3 +11,10 @@ Content-Type: application/json
 }
 
 ###
+
+
+# @name Fetch_all_users
+GET {{baseUrl}}/api/users
+Content-Type: application/json
+
+###

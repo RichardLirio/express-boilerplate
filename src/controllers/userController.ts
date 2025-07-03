@@ -8,8 +8,17 @@ import { hash } from "bcryptjs";
 
 // GET /api/users - Listar todos os usuários
 export const getAllUsers = async (_: Request, res: Response) => {
-  const users: User[] = await prisma.user.findMany();
-  const response: SuccessResponse<User[]> = {
+  const users: Partial<User>[] = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      createdAt: true,
+      updatedAt: true, // Incluindo updatedAt para manter consistência
+    },
+  });
+
+  const response: SuccessResponse<Partial<User>[]> = {
     success: true,
     message: "Users retrieved successfully",
     data: users,
