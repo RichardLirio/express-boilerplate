@@ -11,7 +11,8 @@
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
     "prepare": "husky",
-    "check": "eslint . --ext .ts"
+    "check": "eslint . --ext .ts",
+    "check:fix": "eslint . --ext .ts  --fix"
   },
   "dependencies": {
     "cors": "^2.8.5",

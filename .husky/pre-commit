@@ -1,5 +1,5 @@
 echo "Checking code quality"
 
-npm run check || (echo "Linting failed. Please fix the issues." && exit 1)
+npm run check:fix || (echo "Linting failed. Please fix the issues." && exit 1)
 
 echo "Done."

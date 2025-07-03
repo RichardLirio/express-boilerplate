@@ -4,8 +4,6 @@ import helmet from "helmet";
 
 const app: Application = express();
 
-const teste = "teste";
-
 app.use(helmet()); // Headers de seguranca
 app.use(cors()); // CORS habilitado
 
