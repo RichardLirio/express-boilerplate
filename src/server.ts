@@ -1,10 +1,5 @@
-import dotenv from "dotenv";
 import app from "./app";
-
-dotenv.config();
-
-const PORT = process.env.PORT || 3000;
-const NODE_ENV = process.env.NODE_ENV || "development";
+import { env } from "./env";
 
 // Tratamento de erros não capturados
 process.on("uncaughtException", (err: Error) => {
@@ -20,10 +15,10 @@ process.on("unhandledRejection", (err: Error) => {
 });
 
 // Inicializar servidor
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Server running on port: ${PORT}`);
-  console.log(`📝 Environment: ${NODE_ENV}`);
-  console.log(`🔗 URL: http://localhost:${PORT}`);
+const server = app.listen(env.PORT, () => {
+  console.log(`🚀 Server running on port: ${env.PORT}`);
+  console.log(`📝 Environment: ${env.NODE_ENV}`);
+  console.log(`🔗 URL: http://localhost:${env.PORT}`);
 });
 
 // shutdown

@@ -1,3 +1,4 @@
+import { env } from "../env";
 import { SuccessResponse } from "@/types/response";
 import { Request, Response } from "express";
 
@@ -9,7 +10,7 @@ export const getHealthStatus = (_: Request, res: Response): void => {
     uptime: process.uptime(), // tempo de atividade do processo
     memory: process.memoryUsage(), // uso de memoria do processo
     version: process.version, // versao do nodejs
-    environment: process.env.NODE_ENV || "development",
+    environment: env.NODE_ENV || "development",
   };
 
   const response: SuccessResponse = {

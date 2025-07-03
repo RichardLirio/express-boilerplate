@@ -1,3 +1,4 @@
+import { env } from "../env/index";
 import { ErrorResponse } from "@/types/response";
 import { Request, Response } from "express";
 
@@ -31,7 +32,7 @@ export const errorHandler = (err: CustomError, req: Request, res: Response) => {
   };
 
   // Em desenvolvimento, incluir stack trace
-  if (process.env.NODE_ENV === "development") {
+  if (env.NODE_ENV === "development") {
     (errorResponse as ErrorResponse & { stack?: string }).stack = err.stack;
   }
 
