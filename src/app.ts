@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { requestLogger } from "./middlewares/logger";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const app: Application = express();
 
@@ -32,5 +33,8 @@ app.use("*", (req, res) => {
     message: `Rote ${req.method} ${req.originalUrl} not found`,
   });
 });
+
+// Middleware global de tratamento de erros (sempre por último pois deve capturar todos os possiveis erros)
+app.use(errorHandler);
 
 export default app;
