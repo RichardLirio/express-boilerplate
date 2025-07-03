@@ -10,7 +10,7 @@ export interface ApiResponse<T = unknown> {
 export interface ErrorResponse {
   success: false;
   message: string;
-  error: string;
+  error: object | string;
   statusCode: number;
 }
 

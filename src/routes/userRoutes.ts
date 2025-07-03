@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { getAllUsers } from "../controllers/userController";
+import { createUser, getAllUsers } from "../controllers/userController";
 
 const userRoutes = Router();
 
 // Definir rotas de usuários
 userRoutes.get("/", getAllUsers);
+
+userRoutes.post("/", createUser);
 
 export default userRoutes;

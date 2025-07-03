@@ -1,14 +1,20 @@
 import { env } from "../env/index";
 import { ErrorResponse } from "@/types/response";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 // Interface para erros customizados
 interface CustomError extends Error {
   statusCode?: number;
+  details?: unknown; // Adicionar campo para detalhes estruturados
 }
 
 // Middleware de tratamento de erros global
-export const errorHandler = (err: CustomError, req: Request, res: Response) => {
+export const errorHandler = (
+  err: CustomError,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // Log do erro
   // TODO: Implementar um Logger externo em produção
   console.error(`❌ Erro: ${err.message}`);
@@ -19,6 +25,8 @@ export const errorHandler = (err: CustomError, req: Request, res: Response) => {
 
   // Definir mensagem baseada no status
   let message = err.message;
+  const errorData = err.details || message;
+
   if (statusCode === 500) {
     message = "Internal Server Error";
   }
@@ -27,7 +35,7 @@ export const errorHandler = (err: CustomError, req: Request, res: Response) => {
   const errorResponse: ErrorResponse = {
     success: false,
     message: "Oops! Something through",
-    error: message,
+    error: errorData,
     statusCode,
   };
 
@@ -37,4 +45,18 @@ export const errorHandler = (err: CustomError, req: Request, res: Response) => {
   }
 
   res.status(statusCode).json(errorResponse);
+  next(); // Chamar o próximo middleware, se necessário
 };
+
+// Classe para criar erros customizados
+export class AppError extends Error implements CustomError {
+  public statusCode: number;
+  public details?: unknown;
+
+  constructor(message: string, statusCode: number = 500, details?: unknown) {
+    super(message);
+    this.statusCode = statusCode;
+    this.details = details;
+    this.name = "AppError";
+  }
+}
