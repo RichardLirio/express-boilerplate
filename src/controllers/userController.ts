@@ -27,6 +27,63 @@ export const getAllUsers = async (_: Request, res: Response) => {
   res.status(200).json(response);
 };
 
+// GET /api/users/:id - Buscar usuário por ID
+export const getUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const getUserParamsSchema = z.object({
+      id: z.string().uuid(),
+    });
+    const { id } = getUserParamsSchema.parse(req.params);
+
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    const response: SuccessResponse<Partial<User>> = {
+      success: true,
+      message: "User retrieved successfully",
+      data: { ...user, password: undefined },
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const validationErrors = error.errors.map((err) => ({
+        field: err.path.join("."),
+        message: err.message,
+      }));
+
+      const validationError = new AppError(
+        "Invalid request data",
+        400,
+        validationErrors // Passando os detalhes como terceiro parâmetro
+      );
+
+      return next(validationError);
+    }
+
+    // Se for um erro customizado, passa direto
+    if (error instanceof AppError) {
+      return next(error);
+    }
+
+    // Para outros erros, cria um erro genérico
+    const genericError = new AppError(
+      error instanceof Error ? error.message : "Internal Server Error",
+      500
+    );
+    next(genericError);
+  }
+};
+
 // POST /api/users - Criar novo usuário
 export const createUser = async (
   req: Request,

@@ -1,4 +1,5 @@
 @baseUrl = http://localhost:3333
+@userId = c72ccb06-930a-4c13-9c76-cddc41957243
 
 # @name Create_user
 POST {{baseUrl}}/api/users
@@ -15,6 +16,13 @@ Content-Type: application/json
 
 # @name Fetch_all_users
 GET {{baseUrl}}/api/users
+Content-Type: application/json
+
+###
+
+
+# @name Get_user_by_id
+GET {{baseUrl}}/api/users/{{userId}}
 Content-Type: application/json
 
 ###
