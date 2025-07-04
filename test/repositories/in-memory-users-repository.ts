@@ -16,14 +16,14 @@ export class InMemoryUsersRepository implements UsersRepository {
     return Users;
   }
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string): Promise<Partial<User> | null> {
     const user = this.items.find((item) => item.id === id);
 
     if (!user) {
       return null;
     }
 
-    return user;
+    return { ...user, password: undefined }; // Exclude password from the returned user
   }
 
   async findByEmail(email: string) {
