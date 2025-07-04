@@ -10,6 +10,9 @@ export const app: Application = express();
 app.use(helmet()); // Headers de seguranca
 app.use(cors()); // CORS habilitado
 
+//desabilitando o ETag para evitar problemas com cache em desenvolvimento
+app.set("etag", false);
+
 // Middlewares de parsing
 app.use(express.json({ limit: "10mb" })); // Parse JSON
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded

@@ -5,7 +5,7 @@ import { Application } from "express";
 import prisma from "@/lib/prisma";
 import { cleanupTestDatabase, setupTestDatabase } from "test/e2e-setup";
 
-describe("Users E2E Tests", () => {
+describe("Fetch Users E2E Tests", () => {
   let application: Application;
 
   beforeAll(async () => {

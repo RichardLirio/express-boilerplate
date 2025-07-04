@@ -15,5 +15,5 @@ export const getAllUsers = async (_: Request, res: Response) => {
     data: Users,
   };
 
-  res.status(200).json(response);
+  return res.status(200).json(response);
 };
