@@ -2,78 +2,37 @@ import { PrismaClient } from "@prisma/client";
 import { execSync } from "child_process";
 import { randomUUID } from "crypto";
 
-// Cria um banco de dados único para cada suite de teste E2E
-const generateDatabaseURL = () => {
-  const testId = randomUUID();
-  const baseUrl =
-    process.env.DATABASE_URL || "postgresql://user:password@localhost:5432";
-  const dbName = baseUrl.split("/").pop()?.split("?")[0] || "myapp";
-  const baseUrlWithoutDb = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
-  return `${baseUrlWithoutDb}/${dbName}_e2e_${testId}`;
-};
+const schemaId = `test_${randomUUID()}`; // Gerando schema unico
+
+function generateTestDatabaseUrl(schema: string): string {
+  const url = new URL(process.env.DATABASE_URL!);
+  url.searchParams.set("schema", schema);
+  return url.toString(); // gera toda a url para conectar ao banco de dados
+}
+
+export const databaseUrl = generateTestDatabaseUrl(schemaId);
+process.env.DATABASE_URL = databaseUrl;
 
 let prisma: PrismaClient;
-let testDatabaseUrl: string;
 
-beforeAll(async () => {
-  // Gera URL única para o banco de teste E2E
-  testDatabaseUrl = generateDatabaseURL();
-  const dbName = testDatabaseUrl.split("/").pop();
-
-  // Cria o banco de dados de teste
-  try {
-    execSync(`createdb ${dbName}`, {
-      stdio: "inherit",
-      env: { ...process.env, PGPASSWORD: process.env.PG_PASSWORD },
-    });
-  } catch (error) {
-    console.log("Database might already exist, continuing...");
-    console.error(error);
-  }
-
+export async function setupTestDatabase() {
+  // Conecta ao banco para criar o schema
   // Configura Prisma com o banco de teste
-  process.env.DATABASE_URL = testDatabaseUrl;
+
   prisma = new PrismaClient();
 
-  // Executa as migrações
-  try {
-    execSync("npx prisma migrate deploy", {
-      stdio: "inherit",
-      env: { ...process.env, DATABASE_URL: testDatabaseUrl },
-    });
-  } catch (error) {
-    console.error("Error running migrations:", error);
-  }
-});
-
-afterAll(async () => {
-  // Limpa o banco de dados de teste
+  await prisma.$connect();
+  await prisma.$executeRawUnsafe(`CREATE SCHEMA IF NOT EXISTS "${schemaId}"`);
   await prisma.$disconnect();
 
-  const dbName = testDatabaseUrl.split("/").pop();
-  try {
-    execSync(`dropdb ${dbName}`, {
-      stdio: "inherit",
-      env: { ...process.env, PGPASSWORD: process.env.PG_PASSWORD },
-    });
-  } catch (error) {
-    console.log("Error dropping test database:", error);
-  }
-});
+  // Roda as migrações
+  execSync("npx prisma migrate deploy", { stdio: "inherit" });
+}
 
-beforeEach(async () => {
-  // Limpa todas as tabelas antes de cada teste
-  const tablenames = await prisma.$queryRaw<Array<{ tablename: string }>>`
-    SELECT tablename FROM pg_tables WHERE schemaname='public'
-  `;
+export async function cleanupTestDatabase() {
+  prisma = new PrismaClient();
 
-  for (const { tablename } of tablenames) {
-    if (tablename !== "_prisma_migrations") {
-      await prisma.$executeRawUnsafe(
-        `TRUNCATE TABLE "public"."${tablename}" RESTART IDENTITY CASCADE;`
-      );
-    }
-  }
-});
-
-export { prisma };
+  await prisma.$connect();
+  await prisma.$executeRawUnsafe(`DROP SCHEMA IF EXISTS "${schemaId}" CASCADE`);
+  await prisma.$disconnect();
+}

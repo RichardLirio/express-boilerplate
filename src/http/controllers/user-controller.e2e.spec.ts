@@ -1,18 +1,24 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import request from "supertest";
 import app from "@/app";
-import { prisma } from "test/e2e-setup";
 import { Application } from "express";
+import prisma from "@/lib/prisma";
+import { cleanupTestDatabase, setupTestDatabase } from "test/e2e-setup";
 
-describe("Posts E2E Tests", () => {
+describe("Users E2E Tests", () => {
   let application: Application;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     application = app;
+    await setupTestDatabase();
+  });
+
+  afterAll(async () => {
+    await cleanupTestDatabase();
   });
 
   describe("GET /users", () => {
-    it("should return all posts with authors", async () => {
+    it("should return all users", async () => {
       // Cria dados de teste
       await prisma.user.createMany({
         data: [

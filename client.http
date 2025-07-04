@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:3333
-@userId = c72ccb06-930a-4c13-9c76-cddc41957243
+@userId = c160e9b4-d0e4-41c2-9450-c577721b9f18
 
 # @name Create_user
 POST {{baseUrl}}/api/users
