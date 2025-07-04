@@ -1,5 +1,5 @@
 import { CreateUserInput, User } from "@/@types/user";
-import { UsersRepository } from "@/domains/user/application/repositories/user-repository";
+import { UsersRepository } from "@/domains/users/application/repositories/user-repository";
 import { randomUUID } from "node:crypto";
 
 export class InMemoryUsersRepository implements UsersRepository {
@@ -49,5 +49,19 @@ export class InMemoryUsersRepository implements UsersRepository {
     this.items.push(user);
 
     return { ...user, password: undefined };
+  }
+
+  async delete(id: string): Promise<Partial<User> | null> {
+    const user = this.items.find((item) => item.id === id); // Encontra o usuário pelo ID
+
+    if (!user) {
+      return null; // Se o usuário não for encontrado, retorna null
+    }
+
+    const userIndex = this.items.findIndex((item) => item.id === id); // Encontra o índice do usuário na lista de usuários
+
+    this.items.splice(userIndex, 1); // Remove o usuário da lista de usuários em memória
+
+    return { ...user, password: undefined }; // Exclude password from the returned user
   }
 }

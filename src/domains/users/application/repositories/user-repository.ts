@@ -5,4 +5,5 @@ export interface UsersRepository {
   findByEmail(email: string): Promise<Partial<User> | null>;
   create(data: CreateUserInput): Promise<Partial<User>>;
   findAll(): Promise<Partial<User>[]>;
+  delete(id: string): Promise<Partial<User> | null>;
 }
