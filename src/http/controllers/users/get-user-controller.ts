@@ -1,30 +1,10 @@
 import { SuccessResponse } from "@/@types/response";
-import { User } from "@/@types/user";
+import { ResourceNotFoundError } from "@/domains/users/application/errors/err";
+import { makeGetUserUseCase } from "@/domains/users/factories/make-get-user-use-case";
 import { AppError } from "@/http/middlewares/error-handler";
-import prisma from "@/lib/prisma";
 import { NextFunction, Request, Response } from "express";
+import { User } from "generated/prisma";
 import z from "zod";
-
-// GET /api/users - Listar todos os usuários
-export const getAllUsers = async (_: Request, res: Response) => {
-  const users: Partial<User>[] = await prisma.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      createdAt: true,
-      updatedAt: true, // Incluindo updatedAt para manter consistência
-    },
-  });
-
-  const response: SuccessResponse<Partial<User>[]> = {
-    success: true,
-    message: "Users retrieved successfully",
-    data: users,
-  };
-
-  res.status(200).json(response);
-};
 
 // GET /api/users/:id - Buscar usuário por ID
 export const getUserById = async (
@@ -36,20 +16,17 @@ export const getUserById = async (
     const getUserParamsSchema = z.object({
       id: z.string().uuid(),
     });
+
     const { id } = getUserParamsSchema.parse(req.params);
 
-    const user = await prisma.user.findUnique({
-      where: { id },
-    });
+    const getUserUseCase = makeGetUserUseCase();
 
-    if (!user) {
-      throw new AppError("User not found", 404);
-    }
+    const { User } = await getUserUseCase.execute({ id });
 
-    const response: SuccessResponse<Partial<User>> = {
+    const response: SuccessResponse<User> = {
       success: true,
       message: "User retrieved successfully",
-      data: { ...user, password: undefined },
+      data: User,
     };
 
     res.status(200).json(response);
@@ -69,9 +46,10 @@ export const getUserById = async (
       return next(validationError);
     }
 
-    // Se for um erro customizado, passa direto
-    if (error instanceof AppError) {
-      return next(error);
+    // Se for um erro de usuário já existente, passa para o próximo middleware
+    if (error instanceof ResourceNotFoundError) {
+      const userExistsError = new AppError(error.message, 404);
+      return next(userExistsError);
     }
 
     // Para outros erros, cria um erro genérico

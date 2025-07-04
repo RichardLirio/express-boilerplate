@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { getAllUsers, getUserById } from "../controllers/users/user-controller";
 import { createUser } from "../controllers/users/create-user-controller";
+import { getUserById } from "../controllers/users/get-user-controller";
+import { getAllUsers } from "../controllers/users/fetch-user-controller";
 
 const userRoutes = Router();
 

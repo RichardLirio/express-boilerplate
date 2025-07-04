@@ -18,6 +18,13 @@ describe("Users E2E Tests", () => {
   });
 
   describe("GET /api/users", () => {
+    it("should return empty list", async () => {
+      const response = await request(application).get("/api/users").expect(200);
+
+      expect(response.body.data).toHaveLength(0);
+      expect(response.body.success).toEqual(true);
+    });
+
     it("should return all users", async () => {
       // Cria dados de teste
       await prisma.user.createMany({
