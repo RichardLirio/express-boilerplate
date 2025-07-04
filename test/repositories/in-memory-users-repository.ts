@@ -5,8 +5,8 @@ import { randomUUID } from "node:crypto";
 export class InMemoryUsersRepository implements UsersRepository {
   public items: User[] = [];
 
-  async findAll(): Promise<Partial<User>[]> {
-    const Users: Partial<User>[] = this.items.map((item) => ({
+  async findAll(): Promise<Omit<User, "password">[]> {
+    const Users = this.items.map((item) => ({
       id: item.id,
       name: item.name,
       email: item.email,
@@ -16,14 +16,14 @@ export class InMemoryUsersRepository implements UsersRepository {
     return Users;
   }
 
-  async findById(id: string): Promise<Partial<User> | null> {
+  async findById(id: string): Promise<User | null> {
     const user = this.items.find((item) => item.id === id);
 
     if (!user) {
       return null;
     }
 
-    return { ...user, password: undefined }; // Exclude password from the returned user
+    return user;
   }
 
   async findByEmail(email: string) {
@@ -63,5 +63,16 @@ export class InMemoryUsersRepository implements UsersRepository {
     this.items.splice(userIndex, 1); // Remove o usuário da lista de usuários em memória
 
     return { ...user, password: undefined }; // Exclude password from the returned user
+  }
+
+  async update(id: string, user: User): Promise<User> {
+    // Encontra o índice do usuário na lista
+    const userIndex = this.items.findIndex((item) => item.id === id);
+
+    // Substitui o usuário na lista
+    this.items[userIndex] = user;
+
+    // Retorna o usuário atualizado
+    return this.items[userIndex];
   }
 }

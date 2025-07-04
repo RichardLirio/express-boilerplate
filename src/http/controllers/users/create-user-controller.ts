@@ -1,6 +1,7 @@
 import { UserAlreadyExistsError } from "@/domains/users/application/errors/err";
 import { makeCreateUserUseCase } from "@/domains/users/factories/make-create-user-use-case";
 import { AppError } from "@/http/middlewares/error-handler";
+import { hash } from "bcryptjs";
 import { NextFunction, Request, Response } from "express";
 import z from "zod";
 
@@ -21,10 +22,12 @@ export const createUser = async (
 
     const createUserUseCase = makeCreateUserUseCase();
 
+    const passwordHash = await hash(password, 10); // Hashe da senha
+
     const { User } = await createUserUseCase.execute({
       name,
       email,
-      password,
+      password: passwordHash,
     });
 
     const response = {

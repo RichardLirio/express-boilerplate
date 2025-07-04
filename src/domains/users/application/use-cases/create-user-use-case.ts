@@ -1,7 +1,6 @@
 import { CreateUserInput, User } from "@/@types/user";
 import { UsersRepository } from "../repositories/user-repository";
 import { UserAlreadyExistsError } from "../errors/err";
-import { hash } from "bcryptjs";
 
 interface CreateUserUseCaseResponse {
   User: Partial<User>;
@@ -21,12 +20,10 @@ export class CreateUserUseCase {
       throw new UserAlreadyExistsError();
     }
 
-    const passwordHash = await hash(password, 10); // hashe da senha
-
     const User = await this.UsersRepository.create({
       name,
       email,
-      password: passwordHash,
+      password,
     });
 
     return {

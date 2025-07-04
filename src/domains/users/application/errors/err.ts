@@ -9,3 +9,9 @@ export class ResourceNotFoundError extends Error {
     super("Resource not found");
   }
 }
+
+export class EmailalreadyExistsError extends Error {
+  constructor() {
+    super("Email already exists");
+  }
+}
