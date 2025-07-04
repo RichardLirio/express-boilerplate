@@ -7,7 +7,7 @@ interface GetUserUseCaseParams {
 }
 
 interface GetUserUseCaseResponse {
-  User: Partial<User>;
+  User: User;
 }
 
 export class GetUserUseCase {

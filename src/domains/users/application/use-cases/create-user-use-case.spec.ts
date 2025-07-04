@@ -22,6 +22,8 @@ describe("Create User Use Case", () => {
     });
 
     expect(User.id).toEqual(expect.any(String));
+    expect(User.createdAt).toEqual(expect.any(Date));
+    expect(User.password).toBeUndefined(); // Verifica se a senha não está presente no retorno
   });
 
   // Testa se o usuário não pode ser criado com o mesmo email

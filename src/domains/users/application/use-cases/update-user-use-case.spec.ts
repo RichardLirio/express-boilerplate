@@ -33,7 +33,7 @@ describe("Update User Use Case", () => {
     expect(updatedUser.password).toEqual("12345678");
   });
 
-  // Testa se o usuário não pode ser criado com o mesmo email
+  // Testa se o usuário não pode ser atualizado com um email ja existente
   it("should not be possible to Update a user with the email already exist", async () => {
     const email = "johndoe@example.com";
 
@@ -66,5 +66,56 @@ describe("Update User Use Case", () => {
         password: "123456",
       })
     ).rejects.toBeInstanceOf(ResourceNotFoundError);
+  });
+
+  it("is possible to update only user name", async () => {
+    const user = await userRepository.create({
+      name: "John Doe",
+      email: "johndoe@example.com",
+      password: "123456",
+    });
+
+    const { updatedUser } = await sut.execute(user.id, {
+      name: "John Doe Updated",
+    });
+
+    expect(updatedUser.id).toEqual(expect.any(String));
+    expect(updatedUser.name).toEqual("John Doe Updated");
+    expect(updatedUser.email).toEqual("johndoe@example.com");
+    expect(updatedUser.password).toEqual("123456");
+  });
+
+  it("is possible to update only user email", async () => {
+    const user = await userRepository.create({
+      name: "John Doe",
+      email: "johndoe@example.com",
+      password: "123456",
+    });
+
+    const { updatedUser } = await sut.execute(user.id, {
+      email: "johndoupdate@example.com",
+    });
+
+    expect(updatedUser.id).toEqual(expect.any(String));
+    expect(updatedUser.name).toEqual("John Doe");
+    expect(updatedUser.email).toEqual("johndoupdate@example.com");
+    expect(updatedUser.password).toEqual("123456");
+  });
+
+  it("is possible to update only user password", async () => {
+    const user = await userRepository.create({
+      name: "John Doe",
+      email: "johndoe@example.com",
+      password: "123456",
+    });
+
+    const { updatedUser } = await sut.execute(user.id, {
+      password: "123456789",
+    });
+
+    expect(updatedUser.id).toEqual(expect.any(String));
+    expect(updatedUser.name).toEqual("John Doe");
+    expect(updatedUser.email).toEqual("johndoe@example.com");
+    expect(updatedUser.password).toEqual("123456789");
   });
 });

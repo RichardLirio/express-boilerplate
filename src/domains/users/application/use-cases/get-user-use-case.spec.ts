@@ -20,16 +20,16 @@ describe("Get User Use Case", () => {
       email: "johndoe@example.com",
       password: "123456",
     });
-    if (createdUser.id) {
-      const { User } = await sut.execute({ id: createdUser.id });
-      expect(User).toEqual(
-        expect.objectContaining({
-          id: createdUser.id,
-          name: createdUser.name,
-          email: createdUser.email,
-        })
-      );
-    }
+
+    const { User } = await sut.execute({ id: createdUser.id });
+
+    expect(User).toEqual(
+      expect.objectContaining({
+        id: createdUser.id,
+        name: createdUser.name,
+        email: createdUser.email,
+      })
+    );
   });
 
   it("should not be possible to get user with invalid id", async () => {

@@ -2,7 +2,7 @@ import { User } from "@/@types/user";
 import { UsersRepository } from "../repositories/user-repository";
 
 interface FetchUserUseCaseResponse {
-  Users: Partial<User>[];
+  Users: Omit<User, "password">[];
 }
 
 export class FetchUserUseCase {
