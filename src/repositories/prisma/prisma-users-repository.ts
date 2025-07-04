@@ -54,6 +54,14 @@ export class PrismaUsersRepository implements UsersRepository {
   }
 
   async delete(id: string): Promise<Partial<User> | null> {
+    const userExists = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!userExists) {
+      return null;
+    }
+
     const user = await prisma.user.delete({
       where: { id },
       select: {
@@ -65,7 +73,7 @@ export class PrismaUsersRepository implements UsersRepository {
       },
     });
 
-    return user ? { ...user } : null; // Exclude password from the returned user
+    return { ...user };
   }
 
   async update(id: string, data: User): Promise<User> {

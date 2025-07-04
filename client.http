@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:3333
-@userId = c160e9b4-d0e4-41c2-9450-c577721b9f18
+@userId = 4e2713d4-d822-46aa-8e60-e7f817f6bc66
 
 # @name Create_user
 POST {{baseUrl}}/api/users
@@ -7,7 +7,7 @@ Content-Type: application/json
 
 {
     "name":"Richard Lirio",
-    "email": "richard@hotmail.com",
+    "email": "richard2@hotmail.com",
     "password": "123456"
 }
 
@@ -23,6 +23,13 @@ Content-Type: application/json
 
 # @name Get_user_by_id
 GET {{baseUrl}}/api/users/{{userId}}
+Content-Type: application/json
+
+###
+
+
+# @name Delete_user_by_id
+DELETE {{baseUrl}}/api/users/{{userId}}
 Content-Type: application/json
 
 ###
