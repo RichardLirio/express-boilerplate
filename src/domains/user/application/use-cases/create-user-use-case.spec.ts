@@ -4,13 +4,13 @@ import { CreateUserUseCase } from "./create-user-use-case";
 import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
 import { UserAlreadyExistsError } from "../errors/err";
 
-let usuarioRepository: UsersRepository;
+let userRepository: UsersRepository;
 let sut: CreateUserUseCase;
 
-describe("Create Use Case", () => {
+describe("Create User Use Case", () => {
   beforeEach(() => {
-    usuarioRepository = new InMemoryUsersRepository();
-    sut = new CreateUserUseCase(usuarioRepository);
+    userRepository = new InMemoryUsersRepository();
+    sut = new CreateUserUseCase(userRepository);
   }); // Cria uma nova instância do repositório de usuários e do caso de uso antes de cada teste
 
   // Testes do caso de uso de criação de usuário

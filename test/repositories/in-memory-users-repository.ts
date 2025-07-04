@@ -5,6 +5,17 @@ import { randomUUID } from "node:crypto";
 export class InMemoryUsersRepository implements UsersRepository {
   public items: User[] = [];
 
+  async findAll(): Promise<Partial<User>[]> {
+    const Users: Partial<User>[] = this.items.map((item) => ({
+      id: item.id,
+      name: item.name,
+      email: item.email,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+    }));
+    return Users;
+  }
+
   async findById(id: string): Promise<User | null> {
     const user = this.items.find((item) => item.id === id);
 
@@ -37,6 +48,6 @@ export class InMemoryUsersRepository implements UsersRepository {
 
     this.items.push(user);
 
-    return user;
+    return { ...user, password: undefined };
   }
 }
