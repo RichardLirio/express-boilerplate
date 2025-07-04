@@ -17,7 +17,7 @@ describe("Users E2E Tests", () => {
     await cleanupTestDatabase();
   });
 
-  describe("GET /users", () => {
+  describe("GET /api/users", () => {
     it("should return all users", async () => {
       // Cria dados de teste
       await prisma.user.createMany({

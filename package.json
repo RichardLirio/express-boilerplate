@@ -13,14 +13,13 @@
     "prepare": "husky",
     "check": "eslint . --ext .ts",
     "check:fix": "eslint . --ext .ts  --fix",
-    "test": "vitest",
     "test:unit": "vitest run --config vitest.config.mts",
     "test:e2e": "vitest run --config vitest.config.e2e.mts",
     "test:unit:watch": "vitest watch --config vitest.config.mts",
     "test:e2e:watch": "vitest watch --config vitest.config.e2e.mts",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "test:all": "npm run test:unit && npm run test:e2e"
+    "test": "npm run test:unit && npm run test:e2e"
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
