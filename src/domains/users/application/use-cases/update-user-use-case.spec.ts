@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { UsersRepository } from "../repositories/user-repository";
 import { UpdateUserUseCase } from "./update-user-use-case";
 import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
-import { EmailalreadyExistsError, ResourceNotFoundError } from "../errors/err";
+import { ResourceNotFoundError, UserAlreadyExistsError } from "../errors/err";
 
 let userRepository: UsersRepository;
 let sut: UpdateUserUseCase;
@@ -55,7 +55,7 @@ describe("Update User Use Case", () => {
         email: email,
         password: "123456",
       })
-    ).rejects.toBeInstanceOf(EmailalreadyExistsError);
+    ).rejects.toBeInstanceOf(UserAlreadyExistsError);
   });
 
   it("should not be possible to update user with invalid id", async () => {

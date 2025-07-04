@@ -1,6 +1,6 @@
 import { UpdateUserInput, User } from "@/@types/user";
 import { UsersRepository } from "../repositories/user-repository";
-import { EmailalreadyExistsError, ResourceNotFoundError } from "../errors/err";
+import { ResourceNotFoundError, UserAlreadyExistsError } from "../errors/err";
 
 interface UpdateUserUseCaseResponse {
   updatedUser: User;
@@ -25,7 +25,7 @@ export class UpdateUserUseCase {
       );
 
       if (userWithSameEmail) {
-        throw new EmailalreadyExistsError();
+        throw new UserAlreadyExistsError();
       }
 
       user.email = dto.email; // Update the email in the user object
