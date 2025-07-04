@@ -1,5 +1,5 @@
-import { UserAlreadyExistsError } from "../../../domains/user/application/errors/err";
-import { makeCreateUserUseCase } from "../../../http/factories/user/make-create-user-use-case";
+import { UserAlreadyExistsError } from "@/domains/users/application/errors/err";
+import { makeCreateUserUseCase } from "@/domains/users/factories/make-create-user-use-case";
 import { AppError } from "@/http/middlewares/error-handler";
 import { NextFunction, Request, Response } from "express";
 import z from "zod";

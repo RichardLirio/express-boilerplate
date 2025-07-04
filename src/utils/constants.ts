@@ -16,9 +16,3 @@ export const MESSAGES = {
   NOT_FOUND: "Resource not found",
   INVALID_DATA: "Invalid data provided",
 } as const;
-
-export const ENVIRONMENTS = {
-  DEVELOPMENT: "development",
-  PRODUCTION: "production",
-  TEST: "test",
-} as const;

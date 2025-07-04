@@ -1,9 +1,9 @@
+import { SuccessResponse } from "@/@types/response";
+import { User } from "@/@types/user";
+import { AppError } from "@/http/middlewares/error-handler";
+import prisma from "@/lib/prisma";
 import { NextFunction, Request, Response } from "express";
 import z from "zod";
-import { AppError } from "../middlewares/error-handler";
-import { User } from "../../@types/user";
-import prisma from "../../lib/prisma";
-import { SuccessResponse } from "../../@types/response";
 
 // GET /api/users - Listar todos os usuários
 export const getAllUsers = async (_: Request, res: Response) => {

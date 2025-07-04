@@ -1,5 +1,5 @@
 import { User, CreateUserInput } from "@/@types/user";
-import { UsersRepository } from "@/domains/user/application/repositories/user-repository";
+import { UsersRepository } from "@/domains/users/application/repositories/user-repository";
 import prisma from "@/lib/prisma";
 
 export class PrismaUsersRepository implements UsersRepository {
