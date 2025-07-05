@@ -5,6 +5,7 @@ import { Application } from "express";
 import { cleanupTestDatabase, setupTestDatabase } from "test/e2e-setup";
 import prisma from "@/lib/prisma";
 import { compare } from "bcryptjs";
+import { randomUUID } from "node:crypto";
 
 describe("Update User E2E Tests", () => {
   let application: Application;
@@ -13,15 +14,19 @@ describe("Update User E2E Tests", () => {
     application = app;
     await setupTestDatabase();
   });
+  afterEach(async () => {
+    await prisma.$executeRaw`TRUNCATE TABLE "users"`;
+  });
 
   afterAll(async () => {
     await cleanupTestDatabase();
   });
 
-  describe("POST /api/users", () => {
+  describe("PATCH /api/users", () => {
     it("should return bad request for invalidate body request", async () => {
+      const uuid = randomUUID();
       const response = await request(application)
-        .post("/api/users")
+        .patch(`/api/users/${uuid}`)
         .send({
           name: 123,
           email: "johndoe@.com",
@@ -55,12 +60,18 @@ describe("Update User E2E Tests", () => {
         },
       });
 
-      const response = await request(application)
-        .post("/api/users")
-        .send({
-          name: "John Doe 2",
-          email: "johndoe@example.com",
+      const userUpdated = await prisma.user.create({
+        data: {
+          name: "John Doe updated",
+          email: "johndoUpdate@example.com",
           password: "123456",
+        },
+      });
+
+      const response = await request(application)
+        .patch(`/api/users/${userUpdated.id}`)
+        .send({
+          email: "johndoe@example.com",
         })
         .expect(409);
 
@@ -68,7 +79,7 @@ describe("Update User E2E Tests", () => {
       expect(response.body.error).toEqual("User already exists");
     });
 
-    it("should be able to create a user", async () => {
+    it("should be able to update a user", async () => {
       const userCreated = await prisma.user.create({
         data: {
           name: "John Doe",
@@ -87,10 +98,12 @@ describe("Update User E2E Tests", () => {
         .expect(201);
 
       expect(response.body.success).toEqual(true);
-      expect(compare("1234568", response.body.data.password)).toEqual(true);
+      expect(
+        await compare("1234568", response.body.data.updatedUser.password)
+      ).toEqual(true);
       expect(response.body.data).toEqual(
         expect.objectContaining({
-          User: expect.objectContaining({
+          updatedUser: expect.objectContaining({
             id: expect.any(String),
             name: "John Doe 2",
             email: "johndo2@example.com",

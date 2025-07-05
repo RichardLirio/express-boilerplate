@@ -1,9 +1,9 @@
 import { SuccessResponse } from "@/@types/response";
+import { User } from "@/@types/user";
 import { ResourceNotFoundError } from "@/domains/users/application/errors/err";
 import { makeGetUserUseCase } from "@/domains/users/factories/make-get-user-use-case";
 import { AppError } from "@/http/middlewares/error-handler";
 import { NextFunction, Request, Response } from "express";
-import { User } from "generated/prisma";
 import z from "zod";
 
 // GET /api/users/:id - Buscar usuário por ID
