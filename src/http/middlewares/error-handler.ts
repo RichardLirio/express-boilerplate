@@ -1,5 +1,5 @@
-import { env } from "../env/index";
-import { ErrorResponse } from "@/types/response";
+import { ErrorResponse } from "@/@types/response";
+import { env } from "../../env/index";
 import { NextFunction, Request, Response } from "express";
 
 // Interface para erros customizados

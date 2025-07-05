@@ -1,14 +1,17 @@
 import express, { Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
-import { requestLogger } from "./middlewares/logger";
-import { errorHandler } from "./middlewares/errorHandler";
-import { routes } from "./routes";
+import { requestLogger } from "./http/middlewares/logger";
+import { routes } from "./http/routes";
+import { errorHandler } from "./http/middlewares/error-handler";
 
-const app: Application = express();
+export const app: Application = express();
 
 app.use(helmet()); // Headers de seguranca
 app.use(cors()); // CORS habilitado
+
+//desabilitando o ETag para evitar problemas com cache em desenvolvimento
+app.set("etag", false);
 
 // Middlewares de parsing
 app.use(express.json({ limit: "10mb" })); // Parse JSON
