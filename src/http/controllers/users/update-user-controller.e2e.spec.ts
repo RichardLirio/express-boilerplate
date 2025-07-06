@@ -4,8 +4,8 @@ import app from "@/app";
 import { Application } from "express";
 import { cleanupTestDatabase, setupTestDatabase } from "test/e2e-setup";
 import prisma from "@/lib/prisma";
-import { compare } from "bcryptjs";
 import { randomUUID } from "node:crypto";
+import { comparePassword } from "@/utils/compare-password";
 
 describe("Update User E2E Tests", () => {
   let application: Application;
@@ -99,7 +99,10 @@ describe("Update User E2E Tests", () => {
 
       expect(response.body.success).toEqual(true);
       expect(
-        await compare("1234568", response.body.data.updatedUser.password)
+        await comparePassword(
+          "1234568",
+          response.body.data.updatedUser.password
+        )
       ).toEqual(true);
       expect(response.body.data).toEqual(
         expect.objectContaining({

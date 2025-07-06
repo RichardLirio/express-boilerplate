@@ -4,7 +4,7 @@ import {
 } from "@/domains/users/application/errors/err";
 import { makeUpdateUserUseCase } from "@/domains/users/factories/make-update-user-use-case";
 import { AppError } from "@/http/middlewares/error-handler";
-import { hash } from "bcryptjs";
+import { hashPassword } from "@/utils/hash-password";
 import { NextFunction, Request, Response } from "express";
 import z from "zod";
 
@@ -33,7 +33,7 @@ export const updateUser = async (
     const { updatedUser } = await updateUserUseCase.execute(id, {
       name,
       email,
-      password: password ? await hash(password, 10) : undefined,
+      password: password ? await hashPassword(password) : undefined,
     });
 
     const response = {
