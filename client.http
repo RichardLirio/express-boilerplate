@@ -1,5 +1,6 @@
 @baseUrl = http://localhost:3333
 @userId = 4e2713d4-d822-46aa-8e60-e7f817f6bc66
+@authToken = {{Authenticate.response.body.data.token}}
 
 # @name Create_user
 POST {{baseUrl}}/api/users
@@ -13,6 +14,28 @@ Content-Type: application/json
 
 ###
 
+# @name Authenticate
+POST {{baseUrl}}/api/login
+Content-Type: application/json
+
+{
+    "email": "richard@hotmail.com",
+    "password": "123456"
+}
+
+###
+
+# @name Logout
+POST {{baseUrl}}/api/logout
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "email": "richardTeste@hotmail.com",
+    "password": "123456"
+}
+
+###
 
 # @name Fetch_all_users
 GET {{baseUrl}}/api/users

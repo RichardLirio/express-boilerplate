@@ -26,8 +26,6 @@ export class AuthenticateUserUseCase {
       throw new InvalidCredentialsError();
     }
 
-    return {
-      User,
-    };
+    return { User: { ...User, password: undefined } };
   }
 }
