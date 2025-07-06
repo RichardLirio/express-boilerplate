@@ -1,6 +1,7 @@
 import { UpdateUserInput, User } from "@/@types/user";
 import { UsersRepository } from "../repositories/user-repository";
 import { ResourceNotFoundError, UserAlreadyExistsError } from "../errors/err";
+import { hashPassword } from "@/utils/hash-password";
 
 interface UpdateUserUseCaseResponse {
   updatedUser: User;
@@ -36,7 +37,8 @@ export class UpdateUserUseCase {
     }
 
     if (dto.password) {
-      user.password = dto.password; // Update the password in the user object
+      const passwordHashed = await hashPassword(dto.password);
+      user.password = passwordHashed; // Update the password in the user object
     }
 
     const updatedUser = await this.UsersRepository.update(id, user);

@@ -9,3 +9,15 @@ export class ResourceNotFoundError extends Error {
     super("Resource not found");
   }
 }
+
+export class UserDoesNotExistError extends Error {
+  constructor() {
+    super("User does not exist");
+  }
+}
+
+export class InvalidCredentialsError extends Error {
+  constructor() {
+    super("Invalid credentials");
+  }
+}

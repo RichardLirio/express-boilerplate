@@ -11,21 +11,14 @@ export class PrismaUsersRepository implements UsersRepository {
     return user ? user : null; // Exclude password from the returned user
   }
 
-  async findByEmail(email: string): Promise<Omit<User, "password"> | null> {
+  async findByEmail(email: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
       where: { email },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        createdAt: true,
-        updatedAt: true, // Incluindo updatedAt para manter consistência
-      },
     });
     if (!user) {
       return null; // If user not found, return null
     }
-    return { ...user };
+    return user;
   }
 
   async create(data: CreateUserInput): Promise<Omit<User, "password">> {

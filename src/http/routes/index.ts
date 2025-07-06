@@ -1,6 +1,9 @@
 import { Router } from "express";
 import userRoutes from "./user-routes";
 import { getHealthStatus } from "../controllers/health/health-controller";
+import authRoutes from "./auth-routes";
+import { authenticate } from "../middlewares/auth";
+import { logoutUser } from "../controllers/auth/logout-user-controller";
 
 export const routes = Router();
 
@@ -9,6 +12,11 @@ routes.get("/health", getHealthStatus);
 
 // Rotas de usuários
 routes.use("/users", userRoutes);
+
+// Auth
+routes.use("/login", authRoutes);
+
+routes.use("/logout", authenticate, logoutUser);
 
 // Rota de boas-vindas da API
 routes.get("/", (_, res) => {
