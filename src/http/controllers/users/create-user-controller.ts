@@ -1,7 +1,6 @@
 import { UserAlreadyExistsError } from "@/domains/users/application/errors/err";
 import { makeCreateUserUseCase } from "@/domains/users/factories/make-create-user-use-case";
 import { AppError } from "@/http/middlewares/error-handler";
-import { hashPassword } from "@/utils/hash-password";
 import { NextFunction, Request, Response } from "express";
 import z from "zod";
 
@@ -25,7 +24,7 @@ export const createUser = async (
     const { User } = await createUserUseCase.execute({
       name,
       email,
-      password: await hashPassword(password), // Hashe da senha,
+      password,
     });
 
     const response = {

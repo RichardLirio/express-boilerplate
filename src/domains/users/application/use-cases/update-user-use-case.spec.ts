@@ -3,6 +3,7 @@ import { UsersRepository } from "../repositories/user-repository";
 import { UpdateUserUseCase } from "./update-user-use-case";
 import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
 import { ResourceNotFoundError, UserAlreadyExistsError } from "../errors/err";
+import { comparePassword } from "@/utils/compare-password";
 
 let userRepository: UsersRepository;
 let sut: UpdateUserUseCase;
@@ -30,7 +31,7 @@ describe("Update User Use Case", () => {
     expect(updatedUser.id).toEqual(expect.any(String));
     expect(updatedUser.name).toEqual("John Doe Updated");
     expect(updatedUser.email).toEqual("johndoupdate@example.com");
-    expect(updatedUser.password).toEqual("12345678");
+    expect(updatedUser.password).toEqual(expect.any(String));
   });
 
   // Testa se o usuário não pode ser atualizado com um email ja existente
@@ -116,6 +117,8 @@ describe("Update User Use Case", () => {
     expect(updatedUser.id).toEqual(expect.any(String));
     expect(updatedUser.name).toEqual("John Doe");
     expect(updatedUser.email).toEqual("johndoe@example.com");
-    expect(updatedUser.password).toEqual("123456789");
+    expect(await comparePassword("123456789", updatedUser.password)).toEqual(
+      true
+    );
   });
 });

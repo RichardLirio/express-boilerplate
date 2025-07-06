@@ -14,6 +14,12 @@ export interface CreateUserInput {
   password: string;
 }
 
+// Tipo de autenticação de usuário
+export interface AuthenticateUserInput {
+  email: string;
+  password: string;
+}
+
 // Tipo para atualização de usuário (campos opcionais)
 export interface UpdateUserInput {
   name?: string;
