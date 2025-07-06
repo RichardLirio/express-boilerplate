@@ -6,7 +6,7 @@ import { cleanupTestDatabase, setupTestDatabase } from "test/e2e-setup";
 import prisma from "@/lib/prisma";
 import { hashPassword } from "@/utils/hash-password";
 
-describe("Authenticate User E2E Tests", () => {
+describe("Logout User E2E Tests", () => {
   let application: Application;
 
   beforeAll(async () => {
@@ -22,7 +22,7 @@ describe("Authenticate User E2E Tests", () => {
     await cleanupTestDatabase();
   });
 
-  describe("POST /api/logout", () => {
+  describe("POST /api/auth/logout", () => {
     it("should possible to logout a user", async () => {
       const user = await prisma.user.create({
         data: {
@@ -32,13 +32,15 @@ describe("Authenticate User E2E Tests", () => {
         },
       });
 
-      const responseauth = await request(application).post("/api/login").send({
-        email: user.email,
-        password: "123456",
-      });
+      const responseauth = await request(application)
+        .post("/api/auth/login")
+        .send({
+          email: user.email,
+          password: "123456",
+        });
 
       const response = await request(application)
-        .post("/api/logout")
+        .post("/api/auth/logout")
         .set("Authorization", `Bearer ${responseauth.body.data.token}`)
         .send();
 
@@ -47,7 +49,9 @@ describe("Authenticate User E2E Tests", () => {
     });
 
     it("should not be possible to log out an unauthorized user", async () => {
-      const response = await request(application).post("/api/logout").send();
+      const response = await request(application)
+        .post("/api/auth/logout")
+        .send();
 
       expect(response.body.error).toEqual("Access token not provided");
     });

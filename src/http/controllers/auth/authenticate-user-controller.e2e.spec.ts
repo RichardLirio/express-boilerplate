@@ -22,7 +22,7 @@ describe("Authenticate User E2E Tests", () => {
     await cleanupTestDatabase();
   });
 
-  describe("POST /api/login", () => {
+  describe("POST /api/auth/login", () => {
     it("should possible to authenticate a user", async () => {
       const user = await prisma.user.create({
         data: {
@@ -33,7 +33,7 @@ describe("Authenticate User E2E Tests", () => {
       });
 
       const response = await request(application)
-        .post("/api/login")
+        .post("/api/auth/login")
         .send({
           email: user.email,
           password: "123456",
@@ -55,7 +55,7 @@ describe("Authenticate User E2E Tests", () => {
 
     it("should return user does not exist error", async () => {
       const response = await request(application)
-        .post("/api/login")
+        .post("/api/auth/login")
         .send({
           email: "johndoe@example.com",
           password: "123456",
@@ -76,7 +76,7 @@ describe("Authenticate User E2E Tests", () => {
       });
 
       const response = await request(application)
-        .post(`/api/login`)
+        .post(`/api/auth/login`)
         .send({
           email: user.email,
           password: "456789",

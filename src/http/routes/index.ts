@@ -2,8 +2,10 @@ import { Router } from "express";
 import userRoutes from "./user-routes";
 import { getHealthStatus } from "../controllers/health/health-controller";
 import authRoutes from "./auth-routes";
-import { authenticate } from "../middlewares/auth";
-import { logoutUser } from "../controllers/auth/logout-user-controller";
+import {
+  getRateLimitStatus,
+  resetRateLimit,
+} from "../middlewares/rate-limiter";
 
 export const routes = Router();
 
@@ -14,9 +16,15 @@ routes.get("/health", getHealthStatus);
 routes.use("/users", userRoutes);
 
 // Auth
-routes.use("/login", authRoutes);
+routes.use("/auth", authRoutes);
 
-routes.use("/logout", authenticate, logoutUser);
+// Rota para verificar status de rate limiting (útil para debug)
+routes.get("/rate-limit-status", getRateLimitStatus);
+
+// Rota para resetar rate limiting (apenas para desenvolvimento)
+if (process.env.NODE_ENV === "development") {
+  routes.post("/reset-rate-limit", resetRateLimit);
+}
 
 // Rota de boas-vindas da API
 routes.get("/", (_, res) => {

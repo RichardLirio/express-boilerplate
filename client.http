@@ -15,7 +15,7 @@ Content-Type: application/json
 ###
 
 # @name Authenticate
-POST {{baseUrl}}/api/login
+POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
@@ -26,7 +26,7 @@ Content-Type: application/json
 ###
 
 # @name Logout
-POST {{baseUrl}}/api/logout
+POST {{baseUrl}}/api/auth/logout
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -40,6 +40,7 @@ Authorization: Bearer {{authToken}}
 # @name Fetch_all_users
 GET {{baseUrl}}/api/users
 Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
 ###
 
@@ -47,6 +48,7 @@ Content-Type: application/json
 # @name Get_user_by_id
 GET {{baseUrl}}/api/users/{{userId}}
 Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
 ###
 
@@ -54,5 +56,6 @@ Content-Type: application/json
 # @name Delete_user_by_id
 DELETE {{baseUrl}}/api/users/{{userId}}
 Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
 ###
