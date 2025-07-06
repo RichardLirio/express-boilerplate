@@ -26,6 +26,11 @@ const server = app.listen(env.PORT, async () => {
   console.log(`🚀 Server running on port: ${env.PORT}`);
   console.log(`📝 Environment: ${env.NODE_ENV}`);
   console.log(`🔗 URL: http://localhost:${env.PORT}`);
+  if (env.SWAGGER_ENABLED) {
+    console.log(
+      `📄 Swagger-ui : http://localhost:${env.PORT}${env.SWAGGER_UI_PATH}`
+    );
+  }
 });
 
 // shutdown
