@@ -5,6 +5,7 @@ import { Application } from "express";
 import { cleanupTestDatabase, setupTestDatabase } from "test/e2e-setup";
 import prisma from "@/lib/prisma";
 import { randomUUID } from "node:crypto";
+import { generateToken } from "@/http/middlewares/auth";
 
 describe("Delete User E2E Tests", () => {
   let application: Application;
@@ -18,10 +19,13 @@ describe("Delete User E2E Tests", () => {
     await cleanupTestDatabase();
   });
 
-  describe("DELETE /api/users", () => {
+  const token = generateToken(randomUUID());
+
+  describe("DELETE /api/users", async () => {
     it("should return bad request for invalid uuid", async () => {
       const response = await request(application)
         .get("/api/users/invalid-uuid")
+        .set("Authorization", `Bearer ${token}`)
         .expect(400);
 
       expect(response.body.success).toEqual(false);
@@ -34,6 +38,7 @@ describe("Delete User E2E Tests", () => {
       const uuid = randomUUID();
       const response = await request(application)
         .get(`/api/users/${uuid}`)
+        .set("Authorization", `Bearer ${token}`)
         .expect(404);
 
       expect(response.body.success).toEqual(false);
@@ -51,6 +56,7 @@ describe("Delete User E2E Tests", () => {
 
       const response = await request(application)
         .delete(`/api/users/${createdUser.id}`)
+        .set("Authorization", `Bearer ${token}`)
         .expect(200);
 
       expect(response.body.success).toEqual(true);

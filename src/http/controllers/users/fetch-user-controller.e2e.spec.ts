@@ -4,6 +4,8 @@ import app from "@/app";
 import { Application } from "express";
 import prisma from "@/lib/prisma";
 import { cleanupTestDatabase, setupTestDatabase } from "test/e2e-setup";
+import { generateToken } from "@/http/middlewares/auth";
+import { randomUUID } from "crypto";
 
 describe("Fetch Users E2E Tests", () => {
   let application: Application;
@@ -17,9 +19,14 @@ describe("Fetch Users E2E Tests", () => {
     await cleanupTestDatabase();
   });
 
+  const token = generateToken(randomUUID());
+
   describe("GET /api/users", () => {
     it("should return empty list", async () => {
-      const response = await request(application).get("/api/users").expect(200);
+      const response = await request(application)
+        .get("/api/users")
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200);
 
       expect(response.body.data).toHaveLength(0);
       expect(response.body.success).toEqual(true);
@@ -42,7 +49,10 @@ describe("Fetch Users E2E Tests", () => {
         ],
       });
 
-      const response = await request(application).get("/api/users").expect(200);
+      const response = await request(application)
+        .get("/api/users")
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200);
 
       expect(response.body.data).toHaveLength(2);
       expect(response.body.success).toEqual(true);

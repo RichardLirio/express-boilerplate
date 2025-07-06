@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Express + TypeScript boilerplate",
   "main": "dist/server.js",
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",

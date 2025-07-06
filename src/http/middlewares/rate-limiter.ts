@@ -7,7 +7,7 @@ const rateLimitStore = new Map<string, RateLimitRecord>();
 const getClientId = (req: Request): string => {
   // Prioridade: IP real > IP do proxy > IP da conexão
   const forwarded = req.headers["x-forwarded-for"] as string;
-  const ip = forwarded ? forwarded.split(",")[0] : req.connection.remoteAddress;
+  const ip = forwarded ? forwarded.split(",")[0] : req.socket.remoteAddress;
   return ip || "unknown";
 };
 

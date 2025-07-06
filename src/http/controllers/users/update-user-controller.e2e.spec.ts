@@ -6,6 +6,7 @@ import { cleanupTestDatabase, setupTestDatabase } from "test/e2e-setup";
 import prisma from "@/lib/prisma";
 import { randomUUID } from "node:crypto";
 import { comparePassword } from "@/utils/compare-password";
+import { generateToken } from "@/http/middlewares/auth";
 
 describe("Update User E2E Tests", () => {
   let application: Application;
@@ -22,11 +23,14 @@ describe("Update User E2E Tests", () => {
     await cleanupTestDatabase();
   });
 
+  const token = generateToken(randomUUID());
+
   describe("PATCH /api/users", () => {
     it("should return bad request for invalidate body request", async () => {
       const uuid = randomUUID();
       const response = await request(application)
         .patch(`/api/users/${uuid}`)
+        .set("Authorization", `Bearer ${token}`)
         .send({
           name: 123,
           email: "johndoe@.com",
@@ -70,6 +74,7 @@ describe("Update User E2E Tests", () => {
 
       const response = await request(application)
         .patch(`/api/users/${userUpdated.id}`)
+        .set("Authorization", `Bearer ${token}`)
         .send({
           email: "johndoe@example.com",
         })
@@ -90,6 +95,7 @@ describe("Update User E2E Tests", () => {
 
       const response = await request(application)
         .patch(`/api/users/${userCreated.id}`)
+        .set("Authorization", `Bearer ${token}`)
         .send({
           name: "John Doe 2",
           email: "johndo2@example.com",
