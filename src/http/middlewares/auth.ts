@@ -50,7 +50,7 @@ export const authenticate = async (
 
     // Adicionar informações do usuário à requisição
     req.user = {
-      userId: decoded.userId,
+      userId: decoded.sub,
     };
 
     next();

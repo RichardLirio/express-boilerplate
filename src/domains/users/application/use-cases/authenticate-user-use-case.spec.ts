@@ -15,7 +15,7 @@ describe("Authenticate User Use Case", () => {
   }); // Cria uma nova instância do repositório de usuários e do caso de uso antes de cada teste
 
   // Testes do caso de uso
-  it("is possible to authenticate a user", async () => {
+  it("possible to authenticate a user", async () => {
     const password = await hashPassword("123456");
     const user = await userRepository.create({
       name: "John Doe",
