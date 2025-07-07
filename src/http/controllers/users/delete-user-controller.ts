@@ -1,9 +1,7 @@
-import { SuccessResponse } from "@/@types/response";
 import { ResourceNotFoundError } from "@/domains/users/application/errors/err";
 import { makeDeleteUserUseCase } from "@/domains/users/factories/make-delete-user-use-case";
 import { AppError } from "@/http/middlewares/error-handler";
 import { NextFunction, Request, Response } from "express";
-import { User } from "generated/prisma";
 import z from "zod";
 
 // DELETE /api/users/:id - delata usuario por ID
@@ -21,15 +19,9 @@ export const deleteUserById = async (
 
     const deleteUserUseCase = makeDeleteUserUseCase();
 
-    const { User } = await deleteUserUseCase.execute({ id });
+    await deleteUserUseCase.execute({ id });
 
-    const response: SuccessResponse<Partial<User>> = {
-      success: true,
-      message: "User deleted successfully",
-      data: User,
-    };
-
-    res.status(200).json(response);
+    res.status(204).json({});
   } catch (error) {
     if (error instanceof z.ZodError) {
       const validationErrors = error.errors.map((err) => ({

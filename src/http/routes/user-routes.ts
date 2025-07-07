@@ -18,22 +18,6 @@ const userRoutes = Router();
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           minimum: 1
- *           default: 1
- *         description: Número da página
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           minimum: 1
- *           maximum: 100
- *           default: 10
- *         description: Número de itens por página
  *     responses:
  *       200:
  *         description: Lista de usuários
@@ -46,17 +30,6 @@ const userRoutes = Router();
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/User'
- *                 pagination:
- *                   type: object
- *                   properties:
- *                     page:
- *                       type: integer
- *                     limit:
- *                       type: integer
- *                     total:
- *                       type: integer
- *                     pages:
- *                       type: integer
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  *       500:
@@ -66,10 +39,10 @@ userRoutes.get("/", authenticate, getAllUsers);
 
 /**
  * @swagger
- * /auth/register:
+ * /users:
  *   post:
- *     summary: Registrar novo usuário
- *     tags: [Auth]
+ *     summary: Criar novo usuário
+ *     tags: [Users]
  *     requestBody:
  *       required: true
  *       content:
@@ -137,7 +110,7 @@ userRoutes.get("/:id", authenticate, getUserById);
  *           type: string
  *         description: ID do usuário
  *     responses:
- *       204:
+ *       200:
  *         description: Usuário deletado com sucesso
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'

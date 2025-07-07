@@ -54,21 +54,10 @@ describe("Delete User E2E Tests", () => {
         },
       });
 
-      const response = await request(application)
+      await request(application)
         .delete(`/api/users/${createdUser.id}`)
         .set("Authorization", `Bearer ${token}`)
-        .expect(200);
-
-      expect(response.body.success).toEqual(true);
-      expect(response.body.data).toEqual(
-        expect.objectContaining({
-          id: createdUser.id,
-          name: "John Doe",
-          email: "johndoe@example.com",
-          createdAt: expect.any(String),
-          updatedAt: expect.any(String),
-        })
-      );
+        .expect(204);
     });
   });
 });
