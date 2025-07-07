@@ -9,6 +9,7 @@ import {
   generalRateLimit,
   rateLimitLogger,
 } from "./http/middlewares/rate-limiter";
+import { setupSwagger } from "./http/middlewares/swagger";
 
 export const app: Application = express();
 
@@ -26,6 +27,9 @@ app.set("etag", false);
 // Middlewares de parsing
 app.use(express.json({ limit: "10mb" })); // Parse JSON
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded
+
+// Setup Swagger
+setupSwagger(app);
 
 // Middleware de logging para rate limiting
 app.use(rateLimitLogger);

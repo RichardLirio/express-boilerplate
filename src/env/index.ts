@@ -12,6 +12,8 @@ const envSchema = z.object({
   PG_DB: z.string(),
   DATABASE_URL: z.string(),
   JWT_SECRET: z.string(),
+  SWAGGER_ENABLED: z.coerce.boolean().default(true),
+  SWAGGER_UI_PATH: z.string().default("/api-docs"),
 });
 
 const _env = envSchema.safeParse(process.env);

@@ -22,7 +22,9 @@
     "test:e2e:watch": "vitest watch --config vitest.config.e2e.mts",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "test": "npm run test:unit && npm run test:e2e"
+    "test": "npm run test:unit && npm run test:e2e",
+    "docs:generate": "swagger-jsdoc -d ./src/docs/swagger.config.ts -o ./docs/swagger.json './src/http/routes/*.ts' './src/docs/components/*.ts'",
+    "docs:serve": "swagger-ui-serve ./docs/swagger.json"
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
@@ -33,6 +35,8 @@
     "express": "^4.18.2",
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "zod": "^3.25.71"
   },
   "devDependencies": {
@@ -44,6 +48,8 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.4.2",
     "@types/supertest": "^6.0.3",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "eslint": "^9.30.1",
