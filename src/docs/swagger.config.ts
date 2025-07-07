@@ -17,7 +17,7 @@ const swaggerDefinition = {
       description: "Development server",
     },
     {
-      url: "https://sua-api.herokuapp.com",
+      url: "https://express-boilerplate-oh96.onrender.com",
       description: "Production server",
     },
   ],
