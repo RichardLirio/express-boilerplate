@@ -1,14 +1,55 @@
 
 services:
-  postgres:
-    container_name: express-boilerplate-pg
-    image: postgres
+ app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: express-boilerplate-app
     ports:
-      - 5432:5432
+      - '3333:3333'
     environment:
-      POSTGRES_USER: ${PG_USER}
-      POSTGRES_PASSWORD: ${PG_PASSWORD}
-      POSTGRES_DB: ${PG_DB}
-      PGDATA: /data/postgres
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - PG_DB=${PG_DB}
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - SWAGGER_ENABLED=${SWAGGER_ENABLED}
+      - SWAGGER_UI_PATH=${SWAGGER_UI_PATH}
     volumes:
-      - ./data/pg:/data/postgres
+      # Volume para desenvolvimento com hot reload
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+    networks:
+      - express-boilerplate-network
+    restart: unless-stopped
+
+ postgres:
+  container_name: express-boilerplate-pg
+  image: postgres
+  ports:
+    - 5432:5432
+  environment:
+    POSTGRES_USER: ${PG_USER}
+    POSTGRES_PASSWORD: ${PG_PASSWORD}
+    POSTGRES_DB: ${PG_DB}
+    PGDATA: /data/postgres
+  volumes:
+    - ./data/pg:/data/postgres
+  networks: 
+    - express-boilerplate-network
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DB}"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+
+networks:
+  express-boilerplate-network:
+    driver: bridge
