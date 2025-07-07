@@ -9,7 +9,7 @@ const authRoutes = Router();
 
 /**
  * @swagger
- * /auth/login:
+ * /api/auth/login:
  *   post:
  *     summary: Fazer login
  *     tags: [Auth]

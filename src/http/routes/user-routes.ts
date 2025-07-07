@@ -12,7 +12,7 @@ const userRoutes = Router();
 // Definir rotas de usuários
 /**
  * @swagger
- * /users:
+ * /api/users:
  *   get:
  *     summary: Listar todos os usuários
  *     tags: [Users]
@@ -39,7 +39,7 @@ userRoutes.get("/", authenticate, getAllUsers);
 
 /**
  * @swagger
- * /users:
+ * /api/users:
  *   post:
  *     summary: Criar novo usuário
  *     tags: [Users]
@@ -65,7 +65,7 @@ userRoutes.post("/", authRateLimit, createUser);
 
 /**
  * @swagger
- * /users/{id}:
+ * /api/users/{id}:
  *   get:
  *     summary: Buscar usuário por ID
  *     tags: [Users]
@@ -96,7 +96,7 @@ userRoutes.get("/:id", authenticate, getUserById);
 
 /**
  * @swagger
- * /users/{id}:
+ * /api/users/{id}:
  *   delete:
  *     summary: Deletar usuário
  *     tags: [Users]
@@ -123,7 +123,7 @@ userRoutes.delete("/:id", authenticate, deleteUserById);
 
 /**
  * @swagger
- * /users/{id}:
+ * /api/users/{id}:
  *   put:
  *     summary: Atualizar usuário
  *     tags: [Users]
