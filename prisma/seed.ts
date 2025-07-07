@@ -2,15 +2,24 @@ import { PrismaClient } from "@prisma/client";
 import { hashPassword } from "../src/utils/hash-password";
 const prisma = new PrismaClient();
 async function main() {
-  const admin = await prisma.user.create({
-    data: {
-      name: "Admin User",
+  const userAdminExist = await prisma.user.findUnique({
+    where: {
       email: "admin@example.com",
-      password: await hashPassword("admin123"),
     },
   });
+  if (!userAdminExist) {
+    const admin = await prisma.user.create({
+      data: {
+        name: "Admin User",
+        email: "admin@example.com",
+        password: await hashPassword("admin123"),
+      },
+    });
 
-  console.log({ admin }, "Admin User created succesfuly");
+    console.log({ admin }, "Admin User created succesfuly");
+  } else {
+    console.log({ userAdminExist }, "Admin User already exists");
+  }
 }
 main()
   .then(async () => {
