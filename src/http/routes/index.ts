@@ -33,8 +33,41 @@ routes.get("/", (_, res) => {
     message: "🎉 Welcome to API Express + TypeScript!",
     version: "1.0.0",
     endpoints: {
-      health: "/api/health",
-      users: "/api/users",
+      publics: [
+        {
+          health: "/api/health",
+          create_user: {
+            method: "post",
+            url: "/api/users",
+          },
+          login: "/api/login",
+          logout: "/api/logout",
+        },
+      ],
+      protected: [
+        {
+          users: {
+            prefix: "/api/users",
+            fetch_users: {
+              method: "get",
+              url: "/api/users",
+            },
+
+            get_user_by_id: {
+              method: "get",
+              url: "/api/users/:id",
+            },
+            delete_user_by_id: {
+              method: "delete",
+              url: "/api/users/:id",
+            },
+            update_user_by_id: {
+              method: "put",
+              url: "/api/users/:id",
+            },
+          },
+        },
+      ],
     },
   });
 });
