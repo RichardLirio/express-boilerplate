@@ -30,35 +30,79 @@ wait_for_db() {
 run_prisma_commands() {
     echo "🔧 Executando comandos do Prisma..."
     
-    # 1. Gerar o cliente Prisma
-    echo "📦 Gerando cliente Prisma..."
-    npx prisma generate
+    # Verificar se o cliente Prisma foi gerado
+    if [ ! -d "node_modules/.prisma" ]; then
+        echo "❌ Cliente Prisma não encontrado! O build pode ter falhado."
+        exit 1
+    fi
     
-    # 2. Executar migrações (deploy)
+    # 1. Executar migrações (deploy)
     echo "🗄️ Executando migrações do banco de dados..."
-    npx prisma migrate deploy
+    # Usar o cliente Prisma diretamente, já que foi gerado no build
+    node -e "
+        const { PrismaClient } = require('@prisma/client');
+        const { execSync } = require('child_process');
+        
+        async function runMigrations() {
+            try {
+                console.log('Executando prisma migrate deploy...');
+                execSync('npx prisma migrate deploy', { 
+                    stdio: 'inherit',
+                    env: { ...process.env }
+                });
+                console.log('✅ Migrações executadas com sucesso!');
+            } catch (error) {
+                console.error('❌ Erro ao executar migrações:', error.message);
+                process.exit(1);
+            }
+        }
+        
+        runMigrations();
+    "
     
-    # 3. Executar seed (se existir)
-    if [ -f "prisma/seed.ts" ] || [ -f "prisma/seed.js" ]; then
+    # 2. Executar seed (se existir e se DATABASE_SEED for true)
+    if [ "$DATABASE_SEED" = "true" ] && ([ -f "prisma/seed.ts" ] || [ -f "prisma/seed.js" ]); then
         echo "🌱 Executando seed do banco de dados..."
-        npx prisma db seed
+        node -e "
+            const { execSync } = require('child_process');
+            
+            try {
+                console.log('Executando prisma db seed...');
+                execSync('npx prisma db seed', { 
+                    stdio: 'inherit',
+                    env: { ...process.env }
+                });
+                console.log('✅ Seed executado com sucesso!');
+            } catch (error) {
+                console.warn('⚠️  Aviso: Erro ao executar seed (pode ser normal):', error.message);
+            }
+        "
     else
-        echo "ℹ️ Nenhum arquivo de seed encontrado, pulando..."
+        echo "ℹ️ Seed desabilitado ou arquivo não encontrado (DATABASE_SEED=${DATABASE_SEED})"
     fi
     
     echo "✅ Comandos do Prisma executados com sucesso!"
 }
 
+# Função para verificar se é ambiente de produção
+is_production() {
+    [ "$NODE_ENV" = "production" ]
+}
+
 # Função principal
 main() {
-    # Aguarda o banco de dados
-    wait_for_db
-    
-    # Executa comandos do Prisma apenas se DATABASE_URL estiver definida
+    # Aguarda o banco de dados apenas se DATABASE_URL estiver definida
     if [ -n "$DATABASE_URL" ]; then
-        run_prisma_commands
+        wait_for_db
+        
+        # Executa comandos do Prisma apenas em produção ou se explicitamente solicitado
+        if is_production || [ "$RUN_PRISMA_COMMANDS" = "true" ]; then
+            run_prisma_commands
+        else
+            echo "ℹ️ Ambiente de desenvolvimento detectado, pulando comandos automáticos do Prisma"
+        fi
     else
-        echo "⚠️ DATABASE_URL não definida, pulando comandos do Prisma"
+        echo "⚠️ DATABASE_URL não definida, pulando verificações do banco de dados"
     fi
     
     echo "🎉 Iniciando aplicação..."

@@ -21,30 +21,65 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 # Stage para desenvolvimento
 FROM base AS development
 ENV NODE_ENV=development
+ENV HUSKY=0
 RUN npm ci --include=dev
 COPY . .
+# Gerar cliente Prisma
+RUN npx prisma generate
+
 RUN chown -R expressapp:nodejs /app
 USER expressapp
 EXPOSE 3333
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["dumb-init", "npm", "run", "dev"]
 
-# Stage para build
-FROM base AS build
-ENV NODE_ENV=production
+# Stage para build - aqui instalamos TODAS as dependências e geramos o Prisma
+FROM base AS builder
+ENV NODE_ENV=development
+ENV HUSKY=0
+
+# Instalar TODAS as dependências (incluindo dev para ter o Prisma CLI)
 RUN npm ci --include=dev
+
+# Copiar código fonte e schema do Prisma
 COPY . .
+
+# Gerar cliente Prisma
+RUN npx prisma generate
+
+# Build da aplicação TypeScript
 RUN npm run build
-RUN npm ci --only=production && npm cache clean --force
+
+# Stage para produção - apenas dependências de runtime
+FROM base AS production-deps
+ENV NODE_ENV=production
+ENV HUSKY=0
+
+# Copiar arquivos de dependências
+COPY package*.json ./
+
+# Instalar apenas dependências de produção
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
 
 # Stage final para produção
 FROM base AS production
 ENV NODE_ENV=production
 
-# Copia apenas os arquivos necessários
-COPY --from=build --chown=expressapp:nodejs /app/dist ./dist
-COPY --from=build --chown=expressapp:nodejs /app/node_modules ./node_modules
-COPY --from=build --chown=expressapp:nodejs /app/package*.json ./
+# Copiar dependências de produção do stage anterior
+COPY --from=production-deps --chown=expressapp:nodejs /app/node_modules ./node_modules
+
+# Copiar código compilado do builder
+COPY --from=builder --chown=expressapp:nodejs /app/dist ./dist
+
+# Copiar cliente Prisma gerado do builder
+COPY --from=builder --chown=expressapp:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=expressapp:nodejs /app/node_modules/@prisma/client ./node_modules/@prisma/client
+
+# Copiar schema do Prisma e arquivos de migração para produção
+COPY --from=builder --chown=expressapp:nodejs /app/prisma ./prisma
+
+# Copiar package.json para ter as informações necessárias
+COPY --from=builder --chown=expressapp:nodejs /app/package*.json ./
 
 # Muda para usuário não-root
 USER expressapp
@@ -54,4 +89,4 @@ EXPOSE 3333
 
 # Comando para executar a aplicação
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["dumb-init", "node", "dist/app.js"]
+CMD ["dumb-init", "npm", "run", "start"]

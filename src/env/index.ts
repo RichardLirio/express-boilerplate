@@ -6,7 +6,7 @@ const envSchema = z.object({
     .enum(["development", "production", "test"])
     .default("development"),
   PORT: z.coerce.number().default(3333),
-  CORS_ORIGIN: z.string().url().default("http://localhost:3333"),
+  CORS_ORIGIN: z.string().url().default("http://localhost"),
   PG_USER: z.string().default("docker"),
   PG_PASSWORD: z.string().default("docker"),
   PG_DB: z.string().default("mydb"),

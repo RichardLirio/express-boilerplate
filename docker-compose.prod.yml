@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: development
+      target: production
     container_name: express-boilerplate-app
     ports:
       - '3333:3333'
@@ -19,7 +19,6 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - SWAGGER_ENABLED=${SWAGGER_ENABLED}
       - SWAGGER_UI_PATH=${SWAGGER_UI_PATH}
-      - RUN_PRISMA_COMMANDS=true
     volumes:
       # Volume para desenvolvimento com hot reload
       - .:/app
@@ -29,6 +28,14 @@ services:
     networks:
       - express-boilerplate-network
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
 
  postgres:
   container_name: express-boilerplate-pg
@@ -50,6 +57,15 @@ services:
     interval: 10s
     timeout: 5s
     retries: 5
+    start_period: 60s
+  deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
 
 networks:
   express-boilerplate-network:
